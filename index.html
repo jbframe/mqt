@@ -1,9 +1,11 @@
 <!doctype html>
+<!-- Karaoke Practice Site v1.1.1 -->
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="color-scheme" content="light dark" />
+  <meta name="version" content="1.1.1" />
   <link rel="icon" href="data:," />
   <title>Karaoke Practice Site</title>
   <style>
@@ -11,34 +13,38 @@
 
     :root{
       color-scheme:light dark;
-      --bg:#f4f1ea;
-      --panel:#fffdf8;
-      --panel-2:#ece8de;
-      --ink:#171713;
-      --muted:#66645d;
-      --line:#d9d3c7;
-      --accent:#d9482f;
-      --accent-soft:#f7d9d1;
-      --accent-ink:#7d1f12;
-      --gold:#b07a12;
-      --shadow:0 18px 55px rgba(55,43,23,.10);
-      --header:rgba(244,241,234,.88);
+      --bg:#F6F6F4;
+      --panel:#FFFFFF;
+      --panel-2:#F0F0EE;
+      --ink:#141414;
+      --muted:#595959;
+      --line:#D8D8D4;
+      --accent:#075280;
+      --accent-soft:#DCE9F2;
+      --accent-ink:#075280;
+      --gold:#6793AF;
+      --shadow:0 18px 55px rgba(0,0,0,.10);
+      --header:rgba(246,246,244,.88);
     }
     @media (prefers-color-scheme:dark){
       :root{
-        --bg:#151512;
-        --panel:#1d1d19;
-        --panel-2:#292923;
-        --ink:#f5f0e7;
-        --muted:#aaa79f;
-        --line:#3a3932;
-        --accent:#ff6d51;
-        --accent-soft:#4c251f;
-        --accent-ink:#ffd2c7;
-        --gold:#e4b550;
-        --shadow:0 22px 64px rgba(0,0,0,.28);
-        --header:rgba(21,21,18,.88);
+        --bg:#0A0A0A;
+        --panel:#161616;
+        --panel-2:#1D1D1D;
+        --ink:#F5F5F3;
+        --muted:#A6A6A2;
+        --line:#2C2C2C;
+        --accent:#4A9FD8;
+        --accent-soft:#122E40;
+        --accent-ink:#4A9FD8;
+        --gold:#8FB8D1;
+        --shadow:0 22px 64px rgba(0,0,0,.55);
+        --header:rgba(10,10,10,.88);
       }
+      /* Filled azure buttons in dark mode carry near-black text for contrast; hat blue #075280 is only used filled with white text. */
+      .seg button.active,.play,.routine,.degree-btn.playing,.sol-btn.primary,.answer-btn.wrong{color:#0A0A0A}
+      .degree-btn.playing .degree-note,.degree-btn.playing .degree-semi{color:#0A0A0A}
+      .routine small{opacity:.75}
     }
     *{box-sizing:border-box}
     [hidden]{display:none!important}
@@ -181,7 +187,7 @@
     .degree-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     .degree-btn.playing{background:var(--accent);color:#fff;border-color:var(--accent)}
     .degree-btn.playing .degree-note,.degree-btn.playing .degree-semi{color:#fff;opacity:.85}
-    .degree-btn.correct{background:#1a7a4c;border-color:#1a7a4c;color:#fff}
+    .degree-btn.correct{background:#075280;border-color:#075280;color:#fff}
     .degree-btn.correct .degree-note,.degree-btn.correct .degree-semi{color:#fff;opacity:.85}
     .degree-btn.wrong{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink)}
     .degree-btn:disabled{cursor:default;opacity:.92}
@@ -206,15 +212,15 @@
     .answer-btn{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:14px 8px;font-weight:800;font-size:.95rem;cursor:pointer}
     .answer-btn:hover{border-color:var(--accent)}
     .answer-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-    .answer-btn.correct{background:#1a7a4c;border-color:#1a7a4c;color:#fff}
+    .answer-btn.correct{background:#075280;border-color:#075280;color:#fff}
     .answer-btn.wrong{background:var(--accent);border-color:var(--accent);color:#fff}
     .answer-btn:disabled{opacity:.75;cursor:default}
     .answer-btn:disabled.correct,.answer-btn:disabled.wrong{opacity:1}
     .quiz-feedback{border-radius:12px;padding:13px 15px;font-size:.9rem;line-height:1.55;display:none;margin-bottom:14px}
     .quiz-feedback.show{display:block}
-    .quiz-feedback.good{background:#e6f4ec;color:#14532d;border:1px solid #a7d8bc}
+    .quiz-feedback.good{background:#E9F1F7;color:#131313;border:1px solid #6793AF}
     .quiz-feedback.bad{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--line)}
-    @media (prefers-color-scheme:dark){.quiz-feedback.good{background:#173527;color:#b7e8cc;border-color:#2a5a40}}
+    @media (prefers-color-scheme:dark){.quiz-feedback.good{background:#122B3D;color:#EAF3FA;border-color:#2E5A78}}
     .quiz-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .sol-tips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
     .sol-tip{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
@@ -235,17 +241,29 @@
     .pitch-note{font-size:clamp(2.4rem,6vw,3.4rem);font-weight:800;letter-spacing:-.04em;line-height:1;min-width:2.2ch}
     .pitch-meta{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--muted);display:flex;gap:14px}
     .pitch-verdict{font-size:.95rem;font-weight:700;line-height:1.4}
-    .pitch-verdict.good{color:#1a7a4c}
-    @media (prefers-color-scheme:dark){.pitch-verdict.good{color:#7ed6a5}}
+    .pitch-verdict.good{color:#075280}
+    @media (prefers-color-scheme:dark){.pitch-verdict.good{color:#8FB8D1}}
     .pitch-verdict.warn{color:var(--accent-ink)}
     .pitch-gauge{position:relative;height:16px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);margin:16px 0 6px;overflow:hidden}
-    .gauge-zone{position:absolute;top:0;bottom:0;left:50%;width:30%;transform:translateX(-50%);background:#1a7a4c;opacity:.28}
+    .gauge-zone{position:absolute;top:0;bottom:0;left:50%;width:30%;transform:translateX(-50%);background:var(--accent);opacity:.28}
     .gauge-center{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--muted);opacity:.7}
     .gauge-marker{position:absolute;top:1px;bottom:1px;width:5px;border-radius:3px;background:var(--accent);left:50%;transform:translateX(-50%);transition:left .07s linear;opacity:0}
     .gauge-marker.on{opacity:1}
     .gauge-labels{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:.64rem;color:var(--muted);margin-bottom:14px}
     .pitch-trace{display:block;width:100%;height:92px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px}
     .pitch-trace-cap{font-family:'DM Mono',monospace;font-size:.64rem;color:var(--muted);margin-top:6px}
+    .games-mic{display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px clamp(20px,4vw,30px);margin-bottom:18px}
+    .games-mic .pitch-status{flex:1;min-width:min(240px,100%)}
+    .game-body{padding:18px clamp(20px,4vw,30px) 24px}
+    .game-target{font-size:clamp(2.2rem,5.5vw,3.2rem);font-weight:800;letter-spacing:-.035em;line-height:1.05;margin:12px 0 0}
+    .game-target-sub{color:var(--muted);font-size:.88rem;line-height:1.55;margin:7px 0 0;max-width:540px}
+    .game-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
+    .game-select{font:inherit;font-family:Manrope,system-ui,sans-serif;font-size:.84rem;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 10px;max-width:min(320px,72vw)}
+    .game-select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .hold-progress{height:12px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);overflow:hidden;margin:14px 0 4px}
+    .hold-progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .1s linear}
+    .hold-readout{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-top:12px}
+    .hold-cents{font-size:clamp(1.9rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-.03em;line-height:1;min-width:4.5ch}
     .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:999px;font-size:.8rem;opacity:0;pointer-events:none;transition:.2s;box-shadow:var(--shadow);z-index:10}
     .toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -288,6 +306,7 @@
     <div class="view-tabs" role="tablist" aria-label="Practice pages">
       <button type="button" class="view-tab active" id="tabSongs" role="tab" aria-selected="true" aria-controls="songView">Song Practice</button>
       <button type="button" class="view-tab" id="tabSolfege" role="tab" aria-selected="false" aria-controls="solfegeView">Solfège Ear Training</button>
+      <button type="button" class="view-tab" id="tabGames" role="tab" aria-selected="false" aria-controls="gamesView">Training games</button>
     </div>
 
     <div id="songView" role="tabpanel" aria-labelledby="tabSongs">
@@ -464,6 +483,122 @@
       <p class="footnote">Movable-Do solfège in the major scale. Do = C4 here for practice; in a song, Do moves to whatever the song’s tonic — home — is.</p>
     </div>
 
+    <div id="gamesView" role="tabpanel" aria-labelledby="tabGames" hidden>
+      <div class="sol-intro">
+        <h2>Training games</h2>
+        <p>Four short games that turn the pitch check into practice: hit a named note, echo one you only hear, sing a scale degree from Do, and hold a note dead steady. One mic runs the whole tab — turn it on once, and every game listens through it. Pitch is measured in your browser; nothing is recorded or sent anywhere, and scores live only while this page is open.</p>
+      </div>
+
+      <div class="games-mic">
+        <button type="button" class="sol-btn primary" id="gamesMicBtn" aria-pressed="false">Turn on mic</button>
+        <span class="pitch-status" id="gamesMicStatus" role="status">Mic is off — the games can play their notes without it, but they can’t hear you sing until it’s on.</span>
+      </div>
+
+      <section class="sol-panel" aria-label="Nail the Note game">
+        <div class="sol-panel-head">
+          <h3>1 · Nail the Note</h3>
+          <p>Target practice: you’re shown a note, you sing it. Within ±15 cents is a bullseye. Ten rounds per set.</p>
+        </div>
+        <div class="game-body">
+          <div class="quiz-stats" aria-label="Nail the Note score">
+            <span class="stat-chip">Round <b id="nailRound">—</b></span>
+            <span class="stat-chip">Avg error <b id="nailAvg">—</b></span>
+            <span class="stat-chip">Streak <b id="nailStreak">0</b></span>
+            <span class="stat-chip">Best streak <b id="nailBest">0</b></span>
+          </div>
+          <div class="game-target" id="nailTarget">Ready?</div>
+          <p class="game-target-sub" id="nailSub">Press “Start set.” Sing each target and hold it steady for a moment — your attempt locks in when you stop singing.</p>
+          <div class="quiz-feedback" id="nailFeedback" role="status" aria-live="polite" style="margin-top:14px"></div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="nailStart">Start set</button>
+            <button type="button" class="sol-btn" id="nailHear" disabled>Hear target</button>
+            <button type="button" class="sol-btn primary" id="nailNext" hidden>Next note →</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="sol-panel" aria-label="Echo game">
+        <div class="sol-panel-head">
+          <h3>2 · Echo</h3>
+          <p>A note plays with its name hidden. Sing it back from memory — then the name and your error are revealed.</p>
+        </div>
+        <div class="game-body">
+          <div class="quiz-stats" aria-label="Echo score">
+            <span class="stat-chip">Round <b id="echoRound">—</b></span>
+            <span class="stat-chip">Avg error <b id="echoAvg">—</b></span>
+            <span class="stat-chip">Last <b id="echoLast">—</b></span>
+          </div>
+          <div class="game-target" id="echoTarget">?</div>
+          <p class="game-target-sub" id="echoSub">Press “Play the note,” listen, then sing the same pitch back and hold it steady — your attempt locks in when you stop.</p>
+          <div class="quiz-feedback" id="echoFeedback" role="status" aria-live="polite" style="margin-top:14px"></div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="echoMain">Play the note</button>
+            <button type="button" class="sol-btn" id="echoReplay" disabled>Replay note</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="sol-panel" aria-label="Sing the Degree game">
+        <div class="sol-panel-head">
+          <h3>3 · Sing the Degree</h3>
+          <p>Movable Do, like the Solfège tab: hear Do as your anchor, then sing the degree you’re given — in this song’s key.</p>
+        </div>
+        <div class="game-body">
+          <div class="quiz-stats" aria-label="Sing the Degree score">
+            <span class="stat-chip">Round <b id="degRound">—</b></span>
+            <span class="stat-chip">Avg error <b id="degAvg">—</b></span>
+            <span class="stat-chip">Streak <b id="degStreak">0</b></span>
+            <span class="stat-chip">Best streak <b id="degBest">0</b></span>
+          </div>
+          <div class="game-target" id="degTarget">Sing: —</div>
+          <p class="game-target-sub" id="degSub">Press “New round.” Walk up from Do in your head — or out loud — until you land on the degree, then hold it steady.</p>
+          <div class="quiz-feedback" id="degFeedback" role="status" aria-live="polite" style="margin-top:14px"></div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="degNew">New round</button>
+            <button type="button" class="sol-btn" id="degHearDo">Hear Do</button>
+            <button type="button" class="sol-btn primary" id="degNext" hidden>Next degree →</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="sol-panel" aria-label="Hold It Steady game">
+        <div class="sol-panel-head">
+          <h3>4 · Hold It Steady</h3>
+          <p>Pick a note and keep it inside ±20 cents for 3 continuous seconds. Drift out and the streak resets — you have 20 seconds per attempt.</p>
+        </div>
+        <div class="game-body">
+          <div class="quiz-stats" aria-label="Hold It Steady score">
+            <span class="stat-chip">Longest hold <b id="holdBest">—</b></span>
+            <span class="stat-chip">Time in zone <b id="holdZone">—</b></span>
+            <span class="stat-chip">Avg error <b id="holdAvg">—</b></span>
+          </div>
+          <div class="pitch-controls" style="padding-left:0;padding-right:0">
+            <label for="holdTarget">Target
+              <select id="holdTarget" class="game-select" aria-label="Target note for Hold It Steady"></select>
+            </label>
+            <button type="button" class="sol-btn" id="holdHear">Hear target</button>
+          </div>
+          <div class="hold-readout">
+            <div class="hold-cents" id="holdCents">—</div>
+            <div class="pitch-meta"><span id="holdNote">no note yet</span><span id="holdState">Press “Start hold,” then sing the target.</span></div>
+          </div>
+          <div class="pitch-gauge" aria-hidden="true"><div class="gauge-zone" style="width:40%"></div><div class="gauge-center"></div><div class="gauge-marker" id="holdMarker"></div></div>
+          <div class="gauge-labels" aria-hidden="true"><span>flat −50¢</span><span>in the zone ±20¢</span><span>sharp +50¢</span></div>
+          <div class="hold-progress" aria-hidden="true"><i id="holdBar"></i></div>
+          <div class="gauge-labels" aria-hidden="true"><span>steady streak</span><span>3 seconds to win</span></div>
+          <canvas class="pitch-trace" id="holdTrace" width="680" height="92" aria-hidden="true"></canvas>
+          <div class="pitch-trace-cap">Your pitch against the target — the flatter the line, the steadier the hold.</div>
+          <div class="quiz-feedback" id="holdFeedback" role="status" aria-live="polite" style="margin-top:14px"></div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="holdStart">Start hold</button>
+            <button type="button" class="sol-btn" id="holdStop" disabled>Stop attempt</button>
+          </div>
+        </div>
+      </section>
+
+      <p class="footnote">Game targets sit in a comfortable range around home in the current practice key — change the key or pick another song on the Song Practice tab and the games follow. ±15 cents counts as a bullseye in Nail the Note and Sing the Degree; a karaoke crowd will never hear anything under 25.</p>
+    </div>
+
     <div class="note-wrap">
       <button type="button" class="note-trigger" aria-describedby="drillsNote">How to read these drills — hover for details</button>
       <div class="note-pop" id="drillsNote" role="tooltip">
@@ -479,6 +614,7 @@
         </ul>
       </div>
     </div>
+    <p class="footnote">v1.1.1</p>
   </main>
   <div class="toast" id="toast" role="status"></div>
 
@@ -839,6 +975,7 @@
     if(!e.target.matches('button')) return;
     shift=Number(e.target.dataset.shift);
     buildPitchTargets();
+    if(typeof buildHoldTargets==='function') buildHoldTargets();
     document.querySelectorAll('#keySeg button').forEach(b=>b.classList.toggle('active',b===e.target));
     showToast(shift===0?'Original practice key':'Practice tone shifted '+Math.abs(shift)+' semitone'+(shift===-1?'':'s')+' down');
   });
@@ -861,22 +998,28 @@
   /* ---- View tabs ---- */
   const songView=document.getElementById('songView');
   const solfegeView=document.getElementById('solfegeView');
+  const gamesView=document.getElementById('gamesView');
   const tabSongs=document.getElementById('tabSongs');
   const tabSolfege=document.getElementById('tabSolfege');
+  const tabGames=document.getElementById('tabGames');
   function showView(which){
-    const isSol=which==='solfege';
-    songView.hidden=isSol;
+    const isSongs=which==='songs', isSol=which==='solfege', isGames=which==='games';
+    songView.hidden=!isSongs;
     solfegeView.hidden=!isSol;
-    tabSongs.classList.toggle('active',!isSol);
+    gamesView.hidden=!isGames;
+    tabSongs.classList.toggle('active',isSongs);
     tabSolfege.classList.toggle('active',isSol);
-    tabSongs.setAttribute('aria-selected',isSol?'false':'true');
+    tabGames.classList.toggle('active',isGames);
+    tabSongs.setAttribute('aria-selected',isSongs?'true':'false');
     tabSolfege.setAttribute('aria-selected',isSol?'true':'false');
+    tabGames.setAttribute('aria-selected',isGames?'true':'false');
     stopSound();
     stopPitchCheck();
     window.scrollTo({top:0,behavior:'smooth'});
   }
   tabSongs.addEventListener('click',()=>showView('songs'));
   tabSolfege.addEventListener('click',()=>showView('solfege'));
+  tabGames.addEventListener('click',()=>showView('games'));
 
   /* ---- Solfège ---- */
   const SOLFEGE=[
@@ -1146,10 +1289,11 @@
   }
 
   let micStream=null, micAnalyser=null, micCtx=null, micRaf=0, micBuf=null;
+  let micOwner=null, gameFrameHandler=null, gameSuppressUntil=0;
   const freqHistory=[];
   const traceData=[];
   const TRACE_MAX=280;
-  let traceAccent='#d9482f', traceMuted='#66645d';
+  let traceAccent='#4A9FD8', traceMuted='#737373';
 
   function setPitchStatus(msg,isErr){
     pitchStatus.textContent=msg;
@@ -1186,7 +1330,7 @@
     setPitchStatus('Asking for the mic\u2026');
     navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})
       .then(stream=>{
-        micStream=stream;
+        micStream=stream; micOwner='pitch';
         const AC=window.AudioContext||window.webkitAudioContext;
         micCtx=new AC();
         if(micCtx.state==='suspended') micCtx.resume();
@@ -1219,7 +1363,14 @@
     if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
     if(micCtx){ try{micCtx.close();}catch(e){} micCtx=null; }
     micAnalyser=null;
+    micOwner=null;
+    gameFrameHandler=null;
     freqHistory.length=0; traceData.length=0;
+    const gmb=document.getElementById('gamesMicBtn');
+    if(gmb){ gmb.textContent='Turn on mic'; gmb.setAttribute('aria-pressed','false'); }
+    const gms=document.getElementById('gamesMicStatus');
+    if(gms&&!gms.classList.contains('err')) gms.textContent='Mic is off — the games can play their notes without it, but they can’t hear you sing until it’s on.';
+    if(typeof resetGameRounds==='function') resetGameRounds();
     if(micBtn){ micBtn.textContent='Turn on mic'; micBtn.setAttribute('aria-pressed','false'); }
     if(pitchLive) pitchLive.hidden=true;
     if(pitchStatus&&!pitchStatus.classList.contains('err')) setPitchStatus('Mic is off — the check only runs while you ask it to.');
@@ -1230,7 +1381,8 @@
     if(!micAnalyser) return;
     micAnalyser.getFloatTimeDomainData(micBuf);
     const hit=wasmPitch?wasmDetect(micBuf,micCtx.sampleRate):jsDetect(micBuf,micCtx.sampleRate);
-    updatePitchUI(hit);
+    if(micOwner==='games'){ if(gameFrameHandler) gameFrameHandler(hit); }
+    else updatePitchUI(hit);
     micRaf=requestAnimationFrame(pitchLoop);
   }
   function updatePitchUI(hit){
@@ -1295,6 +1447,415 @@
       if(!pen){ traceCtx.moveTo(x,y); pen=true; } else { traceCtx.lineTo(x,y); }
     });
     traceCtx.stroke();
+  }
+
+  /* ---- Training games ----
+     One shared mic (started here, torn down by stopPitchCheck above).
+     While micOwner is 'games', pitchLoop hands every detected frame to
+     gameFrameHandler; each game arms it with the attempt it is scoring. */
+  const SCALE_SEMIS=[0,2,4,5,7,9,11,12];
+  function homeFreq(){ return 196*Math.pow(2,shift/12); }
+  function degreeFreq(semi){ return homeFreq()*Math.pow(2,semi/12); }
+  function sylOf(semi){ const d=SOLFEGE.find(x=>x.semi===semi); return d?d.syl:'—'; }
+  function centsWord(c){ if(c===0) return 'dead on (0¢)'; return Math.abs(c)+'¢ '+(c>0?'sharp':'flat'); }
+  function micHint(){ return micStream?'':' Turn on the shared mic above so the game can hear you.'; }
+  function showGameFeedback(el,good,msg){
+    el.className='quiz-feedback show '+(good?'good':'bad');
+    el.textContent=msg;
+  }
+  function hideGameFeedback(el){ el.className='quiz-feedback'; el.textContent=''; }
+  function playGameTone(freq,dur){
+    stopSound();
+    const ctx=getAudio();
+    const d=dur||.9;
+    dispatchTone(ctx,ctx.currentTime+.06,freq,d);
+    // The mic must not grade the speaker: ignore frames until the tone ends.
+    gameSuppressUntil=performance.now()+d*1000+500;
+  }
+  /* An attempt: collect voiced frames against a target until the singer
+     stops (0.55s of silence after at least 0.35s of voice) or 2.6s of voice
+     is captured. The score is the median cents error of the sustained part
+     (everything after the first 200ms of scoop). */
+  function armAttempt(targetFreq,onDone){
+    const st={samples:[],voiced:0,silence:0,started:false,lastT:performance.now(),done:false};
+    gameFrameHandler=function(hit){
+      if(st.done) return;
+      const now=performance.now();
+      const dt=Math.min(120,now-st.lastT); st.lastT=now;
+      if(now<gameSuppressUntil){ st.silence=0; return; }
+      if(hit&&hit.freq>0){
+        st.silence=0; st.started=true; st.voiced+=dt;
+        st.samples.push({t:st.voiced,c:1200*Math.log2(hit.freq/targetFreq)});
+        if(st.voiced>=2600) finishAttempt(st,onDone);
+      } else if(st.started){
+        st.silence+=dt;
+        if(st.silence>=550&&st.voiced>=350) finishAttempt(st,onDone);
+      }
+    };
+  }
+  function finishAttempt(st,onDone){
+    if(st.done) return;
+    st.done=true;
+    gameFrameHandler=null;
+    const sustained=st.samples.filter(s=>s.t>=200);
+    const use=sustained.length>=3?sustained:st.samples;
+    if(!use.length){ onDone(null); return; }
+    const arr=use.map(s=>s.c).sort((a,b)=>a-b);
+    onDone(Math.round(arr[Math.floor(arr.length/2)]));
+  }
+
+  /* Shared mic for the games tab — same detector, same policy handling
+     and same blocked-by-the-frame message as the pitch check. */
+  const gamesMicBtn=document.getElementById('gamesMicBtn');
+  const gamesMicStatus=document.getElementById('gamesMicStatus');
+  function setGamesMicStatus(msg,isErr){
+    gamesMicStatus.textContent=msg;
+    gamesMicStatus.classList.toggle('err',!!isErr);
+  }
+  function startGamesMic(){
+    if(micStream){ stopPitchCheck(); return; }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      setGamesMicStatus('This browser can’t open a microphone on this page — try Chrome or Safari.',true);
+      return;
+    }
+    if(micBlockedByPolicy()){
+      setGamesMicStatus(EMBEDDED_MSG,true);
+      return;
+    }
+    setGamesMicStatus('Asking for the mic…');
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})
+      .then(stream=>{
+        micStream=stream; micOwner='games';
+        const AC=window.AudioContext||window.webkitAudioContext;
+        micCtx=new AC();
+        if(micCtx.state==='suspended') micCtx.resume();
+        const src=micCtx.createMediaStreamSource(stream);
+        micAnalyser=micCtx.createAnalyser();
+        micAnalyser.fftSize=FRAME;
+        micBuf=new Float32Array(FRAME);
+        src.connect(micAnalyser);
+        const cs=getComputedStyle(document.documentElement);
+        traceAccent=(cs.getPropertyValue('--accent')||'').trim()||traceAccent;
+        traceMuted=(cs.getPropertyValue('--muted')||'').trim()||traceMuted;
+        gamesMicBtn.textContent='Turn mic off';
+        gamesMicBtn.setAttribute('aria-pressed','true');
+        setGamesMicStatus('Mic is on — all four games share it. Start any round when you’re ready.');
+        pitchLoop();
+      })
+      .catch(err=>{
+        micStream=null;
+        if(isPolicyBlockError(err)){
+          setGamesMicStatus(EMBEDDED_MSG,true);
+        } else {
+          setGamesMicStatus('Mic blocked. Allow microphone access for this site, then press the button again.',true);
+        }
+      });
+  }
+  gamesMicBtn.addEventListener('click',startGamesMic);
+
+  /* Game 1 — Nail the Note */
+  const nailRoundEl=document.getElementById('nailRound'), nailAvgEl=document.getElementById('nailAvg');
+  const nailStreakEl=document.getElementById('nailStreak'), nailBestEl=document.getElementById('nailBest');
+  const nailTargetEl=document.getElementById('nailTarget'), nailSubEl=document.getElementById('nailSub');
+  const nailFeedback=document.getElementById('nailFeedback');
+  const nailStartBtn=document.getElementById('nailStart'), nailHearBtn=document.getElementById('nailHear'), nailNextBtn=document.getElementById('nailNext');
+  let nail=null;
+  function nailUpdateChips(){
+    if(!nail) return;
+    nailRoundEl.textContent=nail.round+' / 10';
+    nailAvgEl.textContent=nail.errs.length?Math.round(nail.errs.reduce((a,b)=>a+b,0)/nail.errs.length)+'¢':'—';
+    nailStreakEl.textContent=String(nail.streak);
+    nailBestEl.textContent=String(nail.best);
+  }
+  function nailNewTarget(){
+    nail.round++;
+    let s;
+    do{ s=SCALE_SEMIS[Math.floor(Math.random()*SCALE_SEMIS.length)]; }while(s===nail.lastSemi);
+    nail.lastSemi=s; nail.semi=s; nail.active=true;
+    nailTargetEl.textContent=noteNameOf(degreeFreq(s))+' · '+sylOf(s);
+    nailSubEl.textContent='Round '+nail.round+' of 10. Sing it and hold steady — your attempt locks in when you stop.'+micHint();
+    hideGameFeedback(nailFeedback);
+    nailHearBtn.disabled=false;
+    nailNextBtn.hidden=true;
+    nailStartBtn.textContent='Restart set';
+    nailUpdateChips();
+    armAttempt(degreeFreq(s),nailScoreAttempt);
+  }
+  function nailScoreAttempt(cents){
+    if(!nail||!nail.active) return;
+    if(cents===null){
+      nailSubEl.textContent='Didn’t catch that — sing the note again and hold it steady for a moment.';
+      armAttempt(degreeFreq(nail.semi),nailScoreAttempt);
+      return;
+    }
+    nail.active=false;
+    const err=Math.abs(cents);
+    nail.errs.push(err);
+    if(err<=15){ nail.streak++; if(nail.streak>nail.best) nail.best=nail.streak; }
+    else nail.streak=0;
+    const name=noteNameOf(degreeFreq(nail.semi))+' ('+sylOf(nail.semi)+')';
+    let msg;
+    if(err<=15) msg='Bullseye — '+name+', and you were '+centsWord(cents)+'.';
+    else if(err<=35) msg='Close — '+name+' was the target; you were '+centsWord(cents)+'. Most listeners would call that in tune.';
+    else msg='Off — '+name+' was the target; you were '+centsWord(cents)+'. Hear the target, hum it, then take the next one.';
+    nailUpdateChips();
+    if(nail.round>=10){
+      const avg=Math.round(nail.errs.reduce((a,b)=>a+b,0)/nail.errs.length);
+      msg+=' Set complete: average error '+avg+'¢ over 10 rounds, best bullseye streak '+nail.best+'.';
+      nailStartBtn.textContent='Start a new set';
+    } else {
+      nailNextBtn.hidden=false;
+    }
+    showGameFeedback(nailFeedback,err<=35,msg);
+  }
+  nailStartBtn.addEventListener('click',()=>{
+    nail={round:0,errs:[],streak:0,best:0,lastSemi:-1,semi:0,active:false};
+    nailNewTarget();
+  });
+  nailNextBtn.addEventListener('click',()=>{ if(nail&&nail.round<10) nailNewTarget(); });
+  nailHearBtn.addEventListener('click',()=>{ if(nail) playGameTone(degreeFreq(nail.semi),.9); });
+
+  /* Game 2 — Echo */
+  const echoRoundEl=document.getElementById('echoRound'), echoAvgEl=document.getElementById('echoAvg'), echoLastEl=document.getElementById('echoLast');
+  const echoTargetEl=document.getElementById('echoTarget'), echoSubEl=document.getElementById('echoSub');
+  const echoFeedback=document.getElementById('echoFeedback');
+  const echoMainBtn=document.getElementById('echoMain'), echoReplayBtn=document.getElementById('echoReplay');
+  let echoG={round:0,errs:[],lastSemi:-1,semi:0,phase:'idle'};
+  function echoUpdateChips(){
+    echoRoundEl.textContent=echoG.round?String(echoG.round):'—';
+    echoAvgEl.textContent=echoG.errs.length?Math.round(echoG.errs.reduce((a,b)=>a+b,0)/echoG.errs.length)+'¢':'—';
+    echoLastEl.textContent=echoG.errs.length?echoG.errs[echoG.errs.length-1]+'¢':'—';
+  }
+  function echoPlay(){
+    let s;
+    do{ s=SCALE_SEMIS[Math.floor(Math.random()*SCALE_SEMIS.length)]; }while(s===echoG.lastSemi);
+    echoG.lastSemi=s; echoG.semi=s; echoG.phase='listening';
+    echoTargetEl.textContent='?';
+    hideGameFeedback(echoFeedback);
+    echoSubEl.textContent='Listen… now sing that pitch back and hold it steady. Your attempt locks in when you stop.'+micHint();
+    echoMainBtn.disabled=true; echoMainBtn.textContent='Listening…';
+    echoReplayBtn.disabled=false;
+    playGameTone(degreeFreq(s),1);
+    armAttempt(degreeFreq(s),echoScoreAttempt);
+  }
+  function echoScoreAttempt(cents){
+    if(echoG.phase!=='listening') return;
+    if(cents===null){
+      echoSubEl.textContent='Didn’t catch that — sing it again and hold it steady for a moment.';
+      armAttempt(degreeFreq(echoG.semi),echoScoreAttempt);
+      return;
+    }
+    echoG.phase='revealed'; echoG.round++;
+    const err=Math.abs(cents);
+    echoG.errs.push(err);
+    const name=noteNameOf(degreeFreq(echoG.semi))+' ('+sylOf(echoG.semi)+')';
+    echoTargetEl.textContent=name;
+    let msg;
+    if(err<=15) msg='Revealed: '+name+' — you nailed it, '+centsWord(cents)+' on the sustained part of your attempt.';
+    else if(err<=35) msg='Revealed: '+name+' — close, '+centsWord(cents)+' on the sustained part of your attempt.';
+    else msg='Revealed: '+name+' — you were '+centsWord(cents)+' on the sustained part. Replay it and sing along once before the next round.';
+    showGameFeedback(echoFeedback,err<=35,msg);
+    echoSubEl.textContent='That was the note. Press “Next note” for another.';
+    echoUpdateChips();
+    echoMainBtn.disabled=false; echoMainBtn.textContent='Next note';
+  }
+  function echoResetUi(){
+    if(echoG.phase==='listening'){
+      echoG.phase='idle';
+      echoMainBtn.disabled=false; echoMainBtn.textContent='Play the note';
+      echoTargetEl.textContent='?';
+      echoSubEl.textContent='Press “Play the note,” listen, then sing the same pitch back and hold it steady.';
+    }
+  }
+  echoMainBtn.addEventListener('click',echoPlay);
+  echoReplayBtn.addEventListener('click',()=>{ if(echoG.phase!=='idle') playGameTone(degreeFreq(echoG.semi),1); });
+
+  /* Game 3 — Sing the Degree */
+  const DEG_SEMIS=[0,2,4,5,7,9,11];
+  const degRoundEl=document.getElementById('degRound'), degAvgEl=document.getElementById('degAvg');
+  const degStreakEl=document.getElementById('degStreak'), degBestEl=document.getElementById('degBest');
+  const degTargetEl=document.getElementById('degTarget'), degSubEl=document.getElementById('degSub');
+  const degFeedback=document.getElementById('degFeedback');
+  const degNewBtn=document.getElementById('degNew'), degHearDoBtn=document.getElementById('degHearDo'), degNextBtn=document.getElementById('degNext');
+  let deg=null;
+  function degUpdateChips(){
+    if(!deg) return;
+    degRoundEl.textContent=String(deg.round);
+    degAvgEl.textContent=deg.errs.length?Math.round(deg.errs.reduce((a,b)=>a+b,0)/deg.errs.length)+'¢':'—';
+    degStreakEl.textContent=String(deg.streak);
+    degBestEl.textContent=String(deg.best);
+  }
+  function degNewRound(){
+    if(!deg) deg={round:0,errs:[],streak:0,best:0,lastSemi:-1,semi:0,active:false};
+    let s;
+    do{ s=DEG_SEMIS[Math.floor(Math.random()*DEG_SEMIS.length)]; }while(s===deg.lastSemi);
+    deg.lastSemi=s; deg.semi=s; deg.round++; deg.active=true;
+    degTargetEl.textContent='Sing: '+sylOf(s);
+    degSubEl.textContent='Round '+deg.round+'. Anchor on Do, walk the scale in your head, then sing '+sylOf(s)+' and hold it steady.'+micHint();
+    hideGameFeedback(degFeedback);
+    degNextBtn.hidden=true;
+    degUpdateChips();
+    armAttempt(degreeFreq(s),degScoreAttempt);
+  }
+  function degScoreAttempt(cents){
+    if(!deg||!deg.active) return;
+    if(cents===null){
+      degSubEl.textContent='Didn’t catch that — hear Do if you need the anchor, then sing '+sylOf(deg.semi)+' again.';
+      armAttempt(degreeFreq(deg.semi),degScoreAttempt);
+      return;
+    }
+    deg.active=false;
+    const err=Math.abs(cents);
+    deg.errs.push(err);
+    if(err<=25){ deg.streak++; if(deg.streak>deg.best) deg.best=deg.streak; }
+    else deg.streak=0;
+    const name=sylOf(deg.semi)+' is '+noteNameOf(degreeFreq(deg.semi))+' in this key';
+    let msg;
+    if(err<=15) msg='Bullseye — '+name+', and you were '+centsWord(cents)+'.';
+    else if(err<=25) msg='On it — '+name+'; you were '+centsWord(cents)+'. Within 25¢ counts as a hit here.';
+    else msg='Off — '+name+'; you were '+centsWord(cents)+'. Sing Do–Re–Mi up to it out loud once, then take the next degree.';
+    showGameFeedback(degFeedback,err<=25,msg);
+    degUpdateChips();
+    degNextBtn.hidden=false;
+  }
+  degNewBtn.addEventListener('click',degNewRound);
+  degNextBtn.addEventListener('click',degNewRound);
+  degHearDoBtn.addEventListener('click',()=>playGameTone(homeFreq(),.8));
+
+  /* Game 4 — Hold It Steady */
+  const holdTargetSel=document.getElementById('holdTarget');
+  const holdCentsEl=document.getElementById('holdCents'), holdNoteEl=document.getElementById('holdNote'), holdStateEl=document.getElementById('holdState');
+  const holdMarker=document.getElementById('holdMarker'), holdBar=document.getElementById('holdBar');
+  const holdFeedback=document.getElementById('holdFeedback');
+  const holdBestEl=document.getElementById('holdBest'), holdZoneEl=document.getElementById('holdZone'), holdAvgEl=document.getElementById('holdAvg');
+  const holdStartBtn=document.getElementById('holdStart'), holdStopBtn=document.getElementById('holdStop'), holdHearBtn=document.getElementById('holdHear');
+  const holdTraceCanvas=document.getElementById('holdTrace');
+  const holdTraceCtx=holdTraceCanvas.getContext('2d');
+  const holdTraceData=[];
+  let hold=null;
+  function buildHoldTargets(){
+    const prev=holdTargetSel.value;
+    holdTargetSel.innerHTML='';
+    SCALE_SEMIS.forEach(s=>{
+      const o=document.createElement('option');
+      o.value=String(s);
+      o.textContent=noteNameOf(degreeFreq(s))+' · '+sylOf(s);
+      holdTargetSel.appendChild(o);
+    });
+    if(prev&&holdTargetSel.querySelector('option[value="'+prev+'"]')) holdTargetSel.value=prev;
+    else holdTargetSel.value='0';
+  }
+  function holdTargetFreq(){ return degreeFreq(Number(holdTargetSel.value||0)); }
+  function drawHoldTrace(){
+    const w=holdTraceCanvas.width,h=holdTraceCanvas.height,mid=h/2;
+    holdTraceCtx.clearRect(0,0,w,h);
+    holdTraceCtx.save();
+    holdTraceCtx.strokeStyle=traceMuted;
+    holdTraceCtx.setLineDash([5,5]);
+    holdTraceCtx.globalAlpha=.65;
+    holdTraceCtx.beginPath(); holdTraceCtx.moveTo(0,mid); holdTraceCtx.lineTo(w,mid); holdTraceCtx.stroke();
+    holdTraceCtx.restore();
+    holdTraceCtx.strokeStyle=traceAccent;
+    holdTraceCtx.lineWidth=2.2;
+    holdTraceCtx.lineJoin='round';
+    holdTraceCtx.lineCap='round';
+    holdTraceCtx.beginPath();
+    let pen=false;
+    holdTraceData.forEach((c,i)=>{
+      if(c===null){ pen=false; return; }
+      const x=TRACE_MAX<=1?0:(i/(TRACE_MAX-1))*w;
+      const cc=Math.max(-100,Math.min(100,c));
+      const y=mid-(cc/100)*(h/2-4);
+      if(!pen){ holdTraceCtx.moveTo(x,y); pen=true; } else { holdTraceCtx.lineTo(x,y); }
+    });
+    holdTraceCtx.stroke();
+  }
+  function holdFinishUi(){
+    holdStartBtn.disabled=false;
+    holdStopBtn.disabled=true;
+    holdTargetSel.disabled=false;
+  }
+  function finishHold(won){
+    if(!hold) return;
+    const h=hold; hold=null; gameFrameHandler=null;
+    const avg=h.absN?Math.round(h.absSum/h.absN):null;
+    const avgTxt=avg===null?'—':avg+'¢';
+    holdBestEl.textContent=(h.bestMs/1000).toFixed(1)+'s';
+    holdZoneEl.textContent=(h.inZoneMs/1000).toFixed(1)+'s';
+    holdAvgEl.textContent=avgTxt;
+    holdBar.style.width=Math.min(100,h.bestMs/3000*100)+'%';
+    if(won){
+      showGameFeedback(holdFeedback,true,'Held it — 3 steady seconds inside ±20¢. Steadiness score: '+(h.inZoneMs/1000).toFixed(1)+'s total in the zone, average error '+avgTxt+', longest hold '+(h.bestMs/1000).toFixed(1)+'s.');
+      holdStateEl.textContent='Held for 3 seconds — nice and steady.';
+    } else {
+      showGameFeedback(holdFeedback,false,'Attempt over — longest steady hold '+(h.bestMs/1000).toFixed(1)+'s of 3s, '+(h.inZoneMs/1000).toFixed(1)+'s total in the zone, average error '+avgTxt+'. Sing a touch quieter and aim for the middle of the note, not the edge of the zone.');
+      holdStateEl.textContent='Press “Start hold” to try again.';
+    }
+    holdFinishUi();
+  }
+  function holdFrame(hit){
+    if(!hold) return;
+    const now=performance.now();
+    const dt=Math.min(120,now-hold.lastT); hold.lastT=now;
+    if(now<gameSuppressUntil) return;
+    hold.elapsed+=dt;
+    let cents=null;
+    if(hit&&hit.freq>0){
+      cents=1200*Math.log2(hit.freq/hold.freq);
+      hold.absSum+=Math.abs(cents); hold.absN++;
+    }
+    const inZone=cents!==null&&Math.abs(cents)<=20;
+    if(inZone){
+      hold.streakMs+=dt; hold.inZoneMs+=dt;
+      if(hold.streakMs>hold.bestMs) hold.bestMs=hold.streakMs;
+    } else {
+      hold.streakMs=0;
+    }
+    if(cents===null){
+      holdCentsEl.textContent='—';
+      holdNoteEl.textContent='listening…';
+      holdMarker.classList.remove('on');
+    } else {
+      holdCentsEl.textContent=(cents>0?'+':'')+Math.round(cents)+'¢';
+      holdNoteEl.textContent=noteNameOf(hit.freq)+' · '+(inZone?'in the zone':'out of the zone');
+      const cl=Math.max(-50,Math.min(50,cents));
+      holdMarker.style.left=(50+cl)+'%';
+      holdMarker.classList.add('on');
+    }
+    holdBar.style.width=Math.min(100,hold.streakMs/3000*100)+'%';
+    if(hold.streakMs>0) holdStateEl.textContent='Steady: '+(hold.streakMs/1000).toFixed(1)+'s of 3s — keep it right there.';
+    else if(cents!==null) holdStateEl.textContent='Out of the zone — the streak resets. Settle back to the middle.';
+    holdTraceData.push(cents===null?null:Math.max(-100,Math.min(100,cents)));
+    if(holdTraceData.length>TRACE_MAX) holdTraceData.shift();
+    drawHoldTrace();
+    if(hold.streakMs>=3000) finishHold(true);
+    else if(hold.elapsed>=20000) finishHold(false);
+  }
+  holdStartBtn.addEventListener('click',()=>{
+    hold={freq:holdTargetFreq(),lastT:performance.now(),elapsed:0,streakMs:0,bestMs:0,inZoneMs:0,absSum:0,absN:0};
+    holdTraceData.length=0;
+    drawHoldTrace();
+    hideGameFeedback(holdFeedback);
+    holdCentsEl.textContent='—';
+    holdNoteEl.textContent='no note yet';
+    holdBar.style.width='0%';
+    holdStartBtn.disabled=true;
+    holdStopBtn.disabled=false;
+    holdTargetSel.disabled=true;
+    holdStateEl.textContent=micStream?'Sing the target and keep it in the zone…':'Turn on the shared mic above first — then your hold is timed here.';
+    gameFrameHandler=holdFrame;
+  });
+  holdStopBtn.addEventListener('click',()=>{ if(hold) finishHold(false); });
+  holdHearBtn.addEventListener('click',()=>playGameTone(holdTargetFreq(),.9));
+  buildHoldTargets();
+
+  /* Called by stopPitchCheck whenever the shared mic goes away:
+     park every game back at a clean start state. */
+  function resetGameRounds(){
+    if(nail) nail.active=false;
+    if(deg) deg.active=false;
+    echoResetUi();
+    if(hold){ hold=null; holdFinishUi(); holdStateEl.textContent='Mic is off — turn it on above, then start the hold again.'; }
   }
 
   render();
