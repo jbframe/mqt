@@ -262,6 +262,14 @@
     .game-select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     .hold-progress{height:12px;border-radius:999px;background:var(--panel-2);border:1px solid var(--line);overflow:hidden;margin:14px 0 4px}
     .hold-progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .1s linear}
+    .breath-stage{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0 8px}
+    .breath-circle{width:158px;height:158px;border-radius:50%;border:2px solid var(--accent);background:var(--panel-2);display:flex;align-items:center;justify-content:center;text-align:center;transform:scale(.72);will-change:transform}
+    .breath-circle b{font-size:1.02rem;letter-spacing:-.01em;padding:0 14px}
+    .breath-count{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted)}
+    .pattern-note{color:var(--muted);font-size:.88rem;line-height:1.55;max-width:620px;margin:12px 0 0}
+    .vowel-big{font-size:clamp(2.8rem,7vw,4.4rem);font-weight:800;letter-spacing:-.02em;text-align:center;padding:14px 0 0;line-height:1}
+    .vowel-sub{text-align:center;color:var(--muted);margin:6px 0 2px;font-size:.92rem}
+    .hiss-readout{font-family:'DM Mono',monospace;font-size:1.5rem;text-align:center;padding:10px 0 0}
     .hold-readout{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-top:12px}
     .hold-cents{font-size:clamp(1.9rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-.03em;line-height:1;min-width:4.5ch}
     .toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:999px;font-size:.8rem;opacity:0;pointer-events:none;transition:.2s;box-shadow:var(--shadow);z-index:10}
@@ -307,6 +315,7 @@
       <button type="button" class="view-tab active" id="tabSongs" role="tab" aria-selected="true" aria-controls="songView">Song Practice</button>
       <button type="button" class="view-tab" id="tabSolfege" role="tab" aria-selected="false" aria-controls="solfegeView">Solfège Ear Training</button>
       <button type="button" class="view-tab" id="tabGames" role="tab" aria-selected="false" aria-controls="gamesView">Training games</button>
+      <button type="button" class="view-tab" id="tabDrills" role="tab" aria-selected="false" aria-controls="drillsView">Breath, Timbre &amp; Holds</button>
     </div>
 
     <div id="songView" role="tabpanel" aria-labelledby="tabSongs">
@@ -373,7 +382,7 @@
         </div>
         <div class="legend"><span aria-hidden="true"><i></i>pitch</span><span class="tip-wrap"><button type="button" class="tip-trigger" id="homeTipBtn" aria-expanded="false" aria-controls="homeTip" aria-label="What is home? Press to see the explanation"><i class="home"></i>home</button><span class="tip-pop" id="homeTip" role="tooltip">
           <strong class="tipt">Home — your reference pitch</strong>
-          <p>Home is the starting note every drill on this page is measured from. It’s a relative reference, not a page — and not the song’s original key, either. The same home is used for all six songs.</p>
+          <p>Home is the starting note every drill on this page is measured from. It’s a relative reference, not a page — and not the song’s original key, either. The same home is used for all seven songs.</p>
           <ul>
             <li><b>home = 0</b> — the dashed line through the middle of each pitch map.</li>
             <li><b>+1, +2…</b> — notes that many semitones above home.</li>
@@ -599,12 +608,126 @@
       <p class="footnote">Game targets sit in a comfortable range around home in the current practice key — change the key or pick another song on the Song Practice tab and the games follow. ±15 cents counts as a bullseye in Nail the Note and Sing the Degree; a karaoke crowd will never hear anything under 25.</p>
     </div>
 
+    <div id="drillsView" role="tabpanel" aria-labelledby="tabDrills" hidden>
+      <div class="sol-intro">
+        <h2>Breath, timbre &amp; long holds</h2>
+        <p>The engine room — the three things every phrase on the other tabs runs on. Breath drills pace your air, timbre drills teach your voice its colors on a single pitch, and the Long Hold builds the stamina to finish a line without it sagging. Only the Long Hold needs the mic; like everything here, pitch is measured in your browser and nothing is recorded or sent anywhere.</p>
+      </div>
+
+      <div class="games-mic">
+        <button type="button" class="sol-btn primary" id="drillsMicBtn" aria-pressed="false">Turn on mic</button>
+        <span class="pitch-status" id="drillsMicStatus" role="status">Mic is off — only the Long Hold needs it; the breath and timbre drills run fine without it.</span>
+      </div>
+
+      <section class="sol-panel" aria-label="Breath Lab">
+        <div class="sol-panel-head">
+          <h3>1 · Breath Lab</h3>
+          <p>Follow the circle: it grows as you breathe in and shrinks as you breathe out. Shoulders down, jaw loose — the air does the work, not your throat.</p>
+        </div>
+        <div class="game-body">
+          <div class="seg" id="breathSeg" aria-label="Breathing pattern">
+            <button data-pattern="calm" class="active">Calm 4·4·8</button>
+            <button data-pattern="box">Box 4·4·4·4</button>
+            <button data-pattern="hiss">Hiss 4·12</button>
+          </div>
+          <p class="pattern-note" id="breathNote">The singer&rsquo;s reset: in for 4, hold for 4, out for 8. A long, slow exhale is what a long phrase feels like from the inside.</p>
+          <div class="breath-stage">
+            <div class="breath-circle" id="breathCircle"><b id="breathPhase">Ready</b></div>
+            <div class="breath-count" id="breathCount">press start when you&rsquo;re ready</div>
+          </div>
+          <div class="quiz-stats" aria-label="Breath session">
+            <span class="stat-chip">Rounds <b id="breathRound">0</b></span>
+            <span class="stat-chip">Pattern <b id="breathPatternName">Calm 4·4·8</b></span>
+          </div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="breathStart">Start</button>
+            <button type="button" class="sol-btn" id="breathReset">Reset</button>
+          </div>
+
+          <h4 style="margin:26px 0 4px">The long hiss</h4>
+          <p class="pattern-note" style="margin-top:0">Your air budget, measured. Take a full breath, press Start the moment you begin exhaling on a steady &ldquo;sss,&rdquo; and press Stop when the tank is truly empty. A thin, even hiss beats a loud one — loud leaks air.</p>
+          <div class="hiss-readout" id="hissTime">0.0s</div>
+          <div class="quiz-stats" aria-label="Hiss results" style="justify-content:center">
+            <span class="stat-chip">Best hiss <b id="hissBest">&mdash;</b></span>
+          </div>
+          <div class="game-actions" style="justify-content:center">
+            <button type="button" class="sol-btn primary" id="hissStart">Start hiss</button>
+            <button type="button" class="sol-btn" id="hissStop" disabled>Stop</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="sol-panel" aria-label="Timbre Lab">
+        <div class="sol-panel-head">
+          <h3>2 · Timbre Lab</h3>
+          <p>One pitch, many colors. Timbre is how the same note can sound bright or dark, nasal or round — and singers steer it mostly with vowel shape and space, not force.</p>
+        </div>
+        <div class="game-body">
+          <h4 style="margin:0 0 4px">Vowel ladder</h4>
+          <p class="pattern-note" style="margin-top:0">Home plays, then steps through five vowels. Sing each one on the same pitch and feel the color change while the note stays put. The ladder loops until you stop it.</p>
+          <div class="vowel-big" id="vowelBig">ah</div>
+          <p class="vowel-sub" id="vowelSub">the home vowel — jaw dropped, relaxed</p>
+          <div class="game-actions" style="justify-content:center">
+            <button type="button" class="sol-btn" id="vowelHear">Hear home</button>
+            <button type="button" class="sol-btn dark" id="vowelStart">Start ladder</button>
+            <button type="button" class="sol-btn" id="vowelStop" disabled>Stop</button>
+          </div>
+
+          <h4 style="margin:26px 0 4px">Name that color</h4>
+          <p class="pattern-note" style="margin-top:0">Home plays in one of four colors — piano, nay, guitar, or pure sine. Name it. This is the ear side of timbre: you can&rsquo;t steer a color you can&rsquo;t hear.</p>
+          <div class="quiz-stats" aria-label="Color match score">
+            <span class="stat-chip">Score <b id="colorScore">0 / 0</b></span>
+            <span class="stat-chip">Streak <b id="colorStreak">0</b></span>
+            <span class="stat-chip">Best streak <b id="colorBest">0</b></span>
+          </div>
+          <p class="quiz-prompt" id="colorPrompt">Ready when you are.</p>
+          <div class="answer-grid" id="colorGrid" role="group" aria-label="Color choices"></div>
+          <div class="quiz-feedback" id="colorFeedback" role="status" aria-live="polite"></div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="colorNew">New color</button>
+            <button type="button" class="sol-btn" id="colorReplay" disabled>Replay</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="sol-panel" aria-label="The Long Hold">
+        <div class="sol-panel-head">
+          <h3>3 · The Long Hold</h3>
+          <p>Hold It Steady&rsquo;s endurance cousin. Sing any comfortable note — the drill locks onto <em>your</em> pitch, then times how long you can keep it within &plusmn;35 cents. Drift out or run dry for more than a breath (0.7s) and the clock stops. This is the last line of a ballad, trained.</p>
+        </div>
+        <div class="game-body">
+          <div class="quiz-stats" aria-label="Long Hold results">
+            <span class="stat-chip">This hold <b id="lhNow">0.0s</b></span>
+            <span class="stat-chip">Best hold <b id="lhBest">&mdash;</b></span>
+            <span class="stat-chip">Time in zone <b id="lhZone">&mdash;</b></span>
+          </div>
+          <div class="hold-readout">
+            <div class="hold-cents" id="lhCents">&mdash;</div>
+            <div class="pitch-meta"><span id="lhNote">no note yet</span><span id="lhState">Turn on the mic above, press &ldquo;Start hold,&rdquo; then sing.</span></div>
+          </div>
+          <div class="pitch-gauge" aria-hidden="true"><div class="gauge-zone" style="width:70%"></div><div class="gauge-center"></div><div class="gauge-marker" id="lhMarker"></div></div>
+          <div class="gauge-labels" aria-hidden="true"><span>flat &minus;50&cent;</span><span>in the zone &plusmn;35&cent;</span><span>sharp +50&cent;</span></div>
+          <div class="hold-progress" aria-hidden="true"><i id="lhBar"></i></div>
+          <div class="gauge-labels" aria-hidden="true"><span>time held</span><span>30s fills the bar</span></div>
+          <canvas class="pitch-trace" id="lhTrace" width="680" height="92" aria-hidden="true"></canvas>
+          <div class="pitch-trace-cap">Your pitch against the note you locked onto — flat line, long hold.</div>
+          <div class="quiz-feedback" id="lhFeedback" role="status" aria-live="polite" style="margin-top:14px"></div>
+          <div class="game-actions">
+            <button type="button" class="sol-btn dark" id="lhStart">Start hold</button>
+            <button type="button" class="sol-btn" id="lhStop" disabled>Stop</button>
+          </div>
+        </div>
+      </section>
+
+      <p class="footnote">Breath first, color second, stamina last — that order works as a five-minute warm-up before any song on the Song Practice tab. The Long Hold band is &plusmn;35 cents on purpose: endurance first, precision lives in Hold It Steady on the Training Games tab.</p>
+    </div>
+
     <div class="note-wrap">
       <button type="button" class="note-trigger" aria-describedby="drillsNote">How to read these drills — hover for details</button>
       <div class="note-pop" id="drillsNote" role="tooltip">
         <strong class="notet">How to read these drills</strong>
         <ul>
-          <li>Short, repeatable pitch drills for six karaoke picks.</li>
+          <li>Short, repeatable pitch drills for seven karaoke picks.</li>
           <li><b>Red line</b> — follow it: higher on the page means higher in your voice.</li>
           <li><b>Dashed line = home</b> — your reference pitch. Home counts as <b>0</b>.</li>
           <li><b>+1, +2…</b> — notes that many semitones above home. <b>−1, −2…</b> — below home.</li>
@@ -614,7 +737,7 @@
         </ul>
       </div>
     </div>
-    <p class="footnote">v1.1.2</p>
+    <p class="footnote">v1.1.3</p>
   </main>
   <div class="toast" id="toast" role="status"></div>
 
@@ -1017,27 +1140,34 @@
   const songView=document.getElementById('songView');
   const solfegeView=document.getElementById('solfegeView');
   const gamesView=document.getElementById('gamesView');
+  const drillsView=document.getElementById('drillsView');
   const tabSongs=document.getElementById('tabSongs');
   const tabSolfege=document.getElementById('tabSolfege');
   const tabGames=document.getElementById('tabGames');
+  const tabDrills=document.getElementById('tabDrills');
   function showView(which){
-    const isSongs=which==='songs', isSol=which==='solfege', isGames=which==='games';
+    const isSongs=which==='songs', isSol=which==='solfege', isGames=which==='games', isDrills=which==='drills';
     songView.hidden=!isSongs;
     solfegeView.hidden=!isSol;
     gamesView.hidden=!isGames;
+    drillsView.hidden=!isDrills;
     tabSongs.classList.toggle('active',isSongs);
     tabSolfege.classList.toggle('active',isSol);
     tabGames.classList.toggle('active',isGames);
+    tabDrills.classList.toggle('active',isDrills);
     tabSongs.setAttribute('aria-selected',isSongs?'true':'false');
     tabSolfege.setAttribute('aria-selected',isSol?'true':'false');
     tabGames.setAttribute('aria-selected',isGames?'true':'false');
+    tabDrills.setAttribute('aria-selected',isDrills?'true':'false');
     stopSound();
     stopPitchCheck();
+    if(typeof stopDrillTimers==='function') stopDrillTimers();
     window.scrollTo({top:0,behavior:'smooth'});
   }
   tabSongs.addEventListener('click',()=>showView('songs'));
   tabSolfege.addEventListener('click',()=>showView('solfege'));
   tabGames.addEventListener('click',()=>showView('games'));
+  tabDrills.addEventListener('click',()=>showView('drills'));
 
   /* ---- Solfège ---- */
   const SOLFEGE=[
@@ -1389,6 +1519,11 @@
     const gms=document.getElementById('gamesMicStatus');
     if(gms&&!gms.classList.contains('err')) gms.textContent='Mic is off — the games can play their notes without it, but they can’t hear you sing until it’s on.';
     if(typeof resetGameRounds==='function') resetGameRounds();
+    const dmb=document.getElementById('drillsMicBtn');
+    if(dmb){ dmb.textContent='Turn on mic'; dmb.setAttribute('aria-pressed','false'); }
+    const dms=document.getElementById('drillsMicStatus');
+    if(dms&&!dms.classList.contains('err')) dms.textContent='Mic is off — only the Long Hold needs it; the breath and timbre drills run fine without it.';
+    if(typeof resetDrillHold==='function') resetDrillHold();
     if(micBtn){ micBtn.textContent='Turn on mic'; micBtn.setAttribute('aria-pressed','false'); }
     if(pitchLive) pitchLive.hidden=true;
     if(pitchStatus&&!pitchStatus.classList.contains('err')) setPitchStatus('Mic is off — the check only runs while you ask it to.');
@@ -1399,7 +1534,7 @@
     if(!micAnalyser) return;
     micAnalyser.getFloatTimeDomainData(micBuf);
     const hit=wasmPitch?wasmDetect(micBuf,micCtx.sampleRate):jsDetect(micBuf,micCtx.sampleRate);
-    if(micOwner==='games'){ if(gameFrameHandler) gameFrameHandler(hit); }
+    if(micOwner==='games'||micOwner==='drills'){ if(gameFrameHandler) gameFrameHandler(hit); }
     else updatePitchUI(hit);
     micRaf=requestAnimationFrame(pitchLoop);
   }
@@ -1874,6 +2009,406 @@
     if(deg) deg.active=false;
     echoResetUi();
     if(hold){ hold=null; holdFinishUi(); holdStateEl.textContent='Mic is off — turn it on above, then start the hold again.'; }
+  }
+
+  /* ---- Breath, timbre & long-hold drills ----
+     Breath and timbre run on timers and the tone engine alone. The Long
+     Hold shares the pitch pipeline: its mic sets micOwner to 'drills'
+     and pitchLoop routes frames to gameFrameHandler, same as the games. */
+  const drillsMicBtn=document.getElementById('drillsMicBtn');
+  const drillsMicStatus=document.getElementById('drillsMicStatus');
+  function setDrillsMicStatus(msg,isErr){
+    drillsMicStatus.textContent=msg;
+    drillsMicStatus.classList.toggle('err',!!isErr);
+  }
+  function startDrillsMic(){
+    if(micStream){ stopPitchCheck(); return; }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      setDrillsMicStatus('This browser can’t open a microphone on this page — try Chrome or Safari.',true);
+      return;
+    }
+    if(micBlockedByPolicy()){
+      setDrillsMicStatus(EMBEDDED_MSG,true);
+      return;
+    }
+    setDrillsMicStatus('Asking for the mic…');
+    navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})
+      .then(stream=>{
+        micStream=stream; micOwner='drills';
+        const AC=window.AudioContext||window.webkitAudioContext;
+        micCtx=new AC();
+        if(micCtx.state==='suspended') micCtx.resume();
+        const src=micCtx.createMediaStreamSource(stream);
+        micAnalyser=micCtx.createAnalyser();
+        micAnalyser.fftSize=FRAME;
+        micBuf=new Float32Array(FRAME);
+        src.connect(micAnalyser);
+        const cs=getComputedStyle(document.documentElement);
+        traceAccent=(cs.getPropertyValue('--accent')||'').trim()||traceAccent;
+        traceMuted=(cs.getPropertyValue('--muted')||'').trim()||traceMuted;
+        drillsMicBtn.textContent='Turn mic off';
+        drillsMicBtn.setAttribute('aria-pressed','true');
+        setDrillsMicStatus('Mic is on — the Long Hold is listening whenever you start it.');
+        pitchLoop();
+      })
+      .catch(err=>{
+        micStream=null;
+        if(isPolicyBlockError(err)){
+          setDrillsMicStatus(EMBEDDED_MSG,true);
+        } else {
+          setDrillsMicStatus('Mic blocked. Allow microphone access for this site, then press the button again.',true);
+        }
+      });
+  }
+  drillsMicBtn.addEventListener('click',startDrillsMic);
+
+  /* Breath Lab — paced patterns + a manual long-hiss timer */
+  const BREATH_PATTERNS={
+    calm:{name:'Calm 4·4·8',note:'The singer’s reset: in for 4, hold for 4, out for 8. A long, slow exhale is what a long phrase feels like from the inside.',phases:[['Breathe in',4,'grow'],['Hold',4,'stay'],['Breathe out',8,'shrink']]},
+    box:{name:'Box 4·4·4·4',note:'Equal sides: in 4, hold 4, out 4, hold empty 4. Steadies nerves before a performance — or a chorus.',phases:[['Breathe in',4,'grow'],['Hold',4,'stay'],['Breathe out',4,'shrink'],['Hold empty',4,'stay']]},
+    hiss:{name:'Hiss 4·12',note:'In for 4, then out on a thin “sss” for 12. If the hiss wobbles, your air is leaking in bursts — smooth it out.',phases:[['Breathe in',4,'grow'],['Out — sss…',12,'shrink']]}
+  };
+  function breathScales(pat){
+    let s=.72;
+    return pat.phases.map(ph=>{
+      const from=s;
+      const to=ph[2]==='grow'?1:(ph[2]==='shrink'?.72:from);
+      s=to;
+      return [from,to];
+    });
+  }
+  const breathCircle=document.getElementById('breathCircle');
+  const breathPhaseEl=document.getElementById('breathPhase');
+  const breathCountEl=document.getElementById('breathCount');
+  const breathRoundEl=document.getElementById('breathRound');
+  const breathPatternNameEl=document.getElementById('breathPatternName');
+  const breathNoteEl=document.getElementById('breathNote');
+  const breathStartBtn=document.getElementById('breathStart');
+  const breathResetBtn=document.getElementById('breathReset');
+  let breath={key:'calm',running:false,started:false,raf:0,phaseIdx:0,phaseStart:0,savedElapsed:0,rounds:0};
+  function breathTick(){
+    if(!breath.running) return;
+    const pat=BREATH_PATTERNS[breath.key], scales=breathScales(pat);
+    const now=performance.now();
+    let idx=breath.phaseIdx, start=breath.phaseStart;
+    let dur=pat.phases[idx][1]*1000, el=now-start;
+    while(el>=dur){
+      start+=dur; idx=(idx+1)%pat.phases.length;
+      if(idx===0){ breath.rounds++; breathRoundEl.textContent=String(breath.rounds); }
+      dur=pat.phases[idx][1]*1000; el=now-start;
+    }
+    if(idx!==breath.phaseIdx||start!==breath.phaseStart){
+      breath.phaseIdx=idx; breath.phaseStart=start;
+      breathPhaseEl.textContent=pat.phases[idx][0];
+    }
+    const pair=scales[idx];
+    const scale=pair[0]+(pair[1]-pair[0])*(el/dur);
+    breathCircle.style.transform='scale('+scale.toFixed(3)+')';
+    breathCountEl.textContent=pat.phases[idx][0]+' · '+Math.max(1,Math.ceil((dur-el)/1000))+'s';
+    breath.raf=requestAnimationFrame(breathTick);
+  }
+  function breathStopUi(){
+    breath.running=false;
+    if(breath.raf) cancelAnimationFrame(breath.raf);
+    breath.raf=0;
+    breathStartBtn.textContent='Start';
+  }
+  breathStartBtn.addEventListener('click',()=>{
+    if(breath.running){
+      breath.savedElapsed=performance.now()-breath.phaseStart;
+      breathStopUi();
+      breathStartBtn.textContent='Resume';
+      breathCountEl.textContent='paused';
+      return;
+    }
+    breath.running=true;
+    if(!breath.started){
+      breath.started=true;
+      breath.phaseIdx=0;
+      breath.phaseStart=performance.now();
+      breathPhaseEl.textContent=BREATH_PATTERNS[breath.key].phases[0][0];
+    } else {
+      breath.phaseStart=performance.now()-breath.savedElapsed;
+    }
+    breath.savedElapsed=0;
+    breathStartBtn.textContent='Pause';
+    breathTick();
+  });
+  function breathReset(){
+    breathStopUi();
+    breath.started=false; breath.rounds=0; breath.phaseIdx=0; breath.savedElapsed=0;
+    breathRoundEl.textContent='0';
+    breathPhaseEl.textContent='Ready';
+    breathCountEl.textContent='press start when you’re ready';
+    breathCircle.style.transform='scale(.72)';
+  }
+  breathResetBtn.addEventListener('click',breathReset);
+  document.getElementById('breathSeg').addEventListener('click',e=>{
+    if(!e.target.matches('button')) return;
+    document.querySelectorAll('#breathSeg button').forEach(b=>b.classList.toggle('active',b===e.target));
+    breath.key=e.target.dataset.pattern;
+    breathNoteEl.textContent=BREATH_PATTERNS[breath.key].note;
+    breathPatternNameEl.textContent=BREATH_PATTERNS[breath.key].name;
+    breathReset();
+  });
+
+  const hissTimeEl=document.getElementById('hissTime');
+  const hissBestEl=document.getElementById('hissBest');
+  const hissStartBtn=document.getElementById('hissStart');
+  const hissStopBtn=document.getElementById('hissStop');
+  let hiss={running:false,raf:0,start:0,best:0};
+  function hissTick(){
+    if(!hiss.running) return;
+    hissTimeEl.textContent=((performance.now()-hiss.start)/1000).toFixed(1)+'s';
+    hiss.raf=requestAnimationFrame(hissTick);
+  }
+  hissStartBtn.addEventListener('click',()=>{
+    hiss.running=true; hiss.start=performance.now();
+    hissStartBtn.disabled=true; hissStopBtn.disabled=false;
+    hissTick();
+  });
+  hissStopBtn.addEventListener('click',()=>{
+    hiss.running=false;
+    if(hiss.raf) cancelAnimationFrame(hiss.raf);
+    const secs=(performance.now()-hiss.start)/1000;
+    hissTimeEl.textContent=secs.toFixed(1)+'s';
+    if(secs>hiss.best){ hiss.best=secs; hissBestEl.textContent=secs.toFixed(1)+'s'; }
+    hissStartBtn.disabled=false; hissStopBtn.disabled=true;
+  });
+
+  /* Timbre Lab — vowel ladder + name-that-color */
+  const VOWELS=[
+    ['ee','bright and forward — think smile'],
+    ['eh','a notch more open'],
+    ['ah','the home vowel — jaw dropped, relaxed'],
+    ['oh','rounder and darker'],
+    ['oo','smallest and darkest — lips round']
+  ];
+  const vowelBigEl=document.getElementById('vowelBig');
+  const vowelSubEl=document.getElementById('vowelSub');
+  const vowelStartBtn=document.getElementById('vowelStart');
+  const vowelStopBtn=document.getElementById('vowelStop');
+  let vowel={idx:0,playing:false,timer:0};
+  function vowelStep(){
+    vowelBigEl.textContent=VOWELS[vowel.idx][0];
+    vowelSubEl.textContent=VOWELS[vowel.idx][1];
+    playGameTone(homeFreq(),1.5);
+  }
+  vowelStartBtn.addEventListener('click',()=>{
+    if(vowel.playing) return;
+    vowel.playing=true; vowel.idx=0;
+    vowelStep();
+    vowel.timer=setInterval(()=>{ vowel.idx=(vowel.idx+1)%VOWELS.length; vowelStep(); },3600);
+    vowelStartBtn.disabled=true; vowelStopBtn.disabled=false;
+  });
+  function vowelStop(){
+    vowel.playing=false;
+    if(vowel.timer) clearInterval(vowel.timer);
+    vowel.timer=0;
+    vowelStartBtn.disabled=false; vowelStopBtn.disabled=true;
+  }
+  vowelStopBtn.addEventListener('click',vowelStop);
+  document.getElementById('vowelHear').addEventListener('click',()=>playGameTone(homeFreq(),1.2));
+
+  const COLORS=[['piano','Piano'],['nay','Nay'],['guitar','Guitar'],['sine','Sine']];
+  const COLOR_HINTS={piano:'the warm, round body',nay:'the nasal buzz',guitar:'the plucked attack',sine:'the pure, empty tone'};
+  const colorGrid=document.getElementById('colorGrid');
+  const colorPromptEl=document.getElementById('colorPrompt');
+  const colorFeedback=document.getElementById('colorFeedback');
+  const colorScoreEl=document.getElementById('colorScore');
+  const colorStreakEl=document.getElementById('colorStreak');
+  const colorBestEl=document.getElementById('colorBest');
+  const colorReplayBtn=document.getElementById('colorReplay');
+  const colorBtns=[];
+  COLORS.forEach(pair=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='answer-btn';
+    b.textContent=pair[1];
+    b.addEventListener('click',()=>answerColor(pair[0],b));
+    colorGrid.appendChild(b);
+    colorBtns.push(b);
+  });
+  let colorQ={answer:null,last:null,answered:true,score:0,total:0,streak:0,best:0};
+  function colorLabel(key){ return COLORS.find(c=>c[0]===key)[1]; }
+  function playColor(key){
+    stopSound();
+    const ctx=getAudio();
+    const t=ctx.currentTime+.06, f=homeFreq();
+    if(key==='piano') pianoTone(ctx,t,f,1.15);
+    else if(key==='nay') nayTone(ctx,t,f,1.15);
+    else if(key==='guitar') pluckTone(ctx,t,f,1.15);
+    else ping(ctx,t,f,1.15,'sine',.14);
+    gameSuppressUntil=performance.now()+1700;
+  }
+  function newColor(){
+    let key;
+    do{ key=COLORS[Math.floor(Math.random()*COLORS.length)][0]; }while(key===colorQ.last);
+    colorQ.last=key; colorQ.answer=key; colorQ.answered=false;
+    colorBtns.forEach(b=>{ b.classList.remove('correct','wrong'); b.disabled=false; });
+    hideGameFeedback(colorFeedback);
+    colorPromptEl.textContent='Which color was that?';
+    colorReplayBtn.disabled=false;
+    playColor(key);
+  }
+  function answerColor(key,btn){
+    if(colorQ.answered||!colorQ.answer) return;
+    colorQ.answered=true;
+    colorQ.total++;
+    if(key===colorQ.answer){
+      colorQ.score++; colorQ.streak++;
+      colorQ.best=Math.max(colorQ.best,colorQ.streak);
+      btn.classList.add('correct');
+      showGameFeedback(colorFeedback,true,'That’s it — '+colorLabel(key)+'.');
+    } else {
+      colorQ.streak=0;
+      btn.classList.add('wrong');
+      colorBtns[COLORS.findIndex(c=>c[0]===colorQ.answer)].classList.add('correct');
+      showGameFeedback(colorFeedback,false,'That was '+colorLabel(colorQ.answer)+' — listen for '+COLOR_HINTS[colorQ.answer]+'.');
+    }
+    colorScoreEl.textContent=colorQ.score+' / '+colorQ.total;
+    colorStreakEl.textContent=String(colorQ.streak);
+    colorBestEl.textContent=String(colorQ.best);
+    colorBtns.forEach(b=>{ b.disabled=true; });
+  }
+  document.getElementById('colorNew').addEventListener('click',newColor);
+  colorReplayBtn.addEventListener('click',()=>{ if(colorQ.answer) playColor(colorQ.answer); });
+
+  /* The Long Hold — self-anchored endurance hold */
+  const lhNowEl=document.getElementById('lhNow');
+  const lhBestEl=document.getElementById('lhBest');
+  const lhZoneEl=document.getElementById('lhZone');
+  const lhCentsEl=document.getElementById('lhCents');
+  const lhNoteEl=document.getElementById('lhNote');
+  const lhStateEl=document.getElementById('lhState');
+  const lhMarker=document.getElementById('lhMarker');
+  const lhBar=document.getElementById('lhBar');
+  const lhFeedback=document.getElementById('lhFeedback');
+  const lhStartBtn=document.getElementById('lhStart');
+  const lhStopBtn=document.getElementById('lhStop');
+  const lhCanvas=document.getElementById('lhTrace');
+  const lhCtx=lhCanvas.getContext('2d');
+  let lh=null, lhBest=0;
+  function drawLhTrace(){
+    const w=lhCanvas.width,h=lhCanvas.height,mid=h/2;
+    lhCtx.clearRect(0,0,w,h);
+    lhCtx.save();
+    lhCtx.strokeStyle=traceMuted;
+    lhCtx.setLineDash([5,5]);
+    lhCtx.globalAlpha=.65;
+    lhCtx.beginPath(); lhCtx.moveTo(0,mid); lhCtx.lineTo(w,mid); lhCtx.stroke();
+    lhCtx.restore();
+    if(!lh) return;
+    lhCtx.strokeStyle=traceAccent;
+    lhCtx.lineWidth=2.2;
+    lhCtx.lineJoin='round';
+    lhCtx.lineCap='round';
+    lhCtx.beginPath();
+    let pen=false;
+    lh.trace.forEach((c,i)=>{
+      if(c===null){ pen=false; return; }
+      const x=TRACE_MAX<=1?0:(i/(TRACE_MAX-1))*w;
+      const cc=Math.max(-100,Math.min(100,c));
+      const y=mid-(cc/100)*(h/2-4);
+      if(!pen){ lhCtx.moveTo(x,y); pen=true; } else { lhCtx.lineTo(x,y); }
+    });
+    lhCtx.stroke();
+  }
+  function lhFinish(){
+    if(!lh) return;
+    const st=lh; lh=null; gameFrameHandler=null;
+    lhStartBtn.disabled=false; lhStopBtn.disabled=true;
+    lhMarker.classList.remove('on');
+    if(st.phase!=='hold'){
+      lhStateEl.textContent='No note locked on — press “Start hold” and sing.';
+      return;
+    }
+    const secs=st.totalMs/1000;
+    const pct=st.totalMs?Math.round(st.inZoneMs/st.totalMs*100):0;
+    lhZoneEl.textContent=pct+'%';
+    const isBest=secs>lhBest;
+    if(isBest){ lhBest=secs; lhBestEl.textContent=secs.toFixed(1)+'s'; }
+    lhStateEl.textContent='Hold over.';
+    showGameFeedback(lhFeedback,secs>=10,'You held '+noteNameOf(st.anchor)+' for '+secs.toFixed(1)+'s — '+pct+'% of it inside ±35 cents.'+(isBest&&secs>=3?' New best.':''));
+  }
+  function lhFrame(hit){
+    if(!lh) return;
+    const now=performance.now();
+    const dt=Math.min(120,now-lh.lastT); lh.lastT=now;
+    if(now<gameSuppressUntil) return;
+    if(lh.phase==='lock'){
+      if(hit&&hit.freq>0){
+        lh.lockSilence=0;
+        lh.lockVoiced+=dt;
+        lh.lockFreqs.push(hit.freq);
+        lhStateEl.textContent='Settling… keep it steady.';
+        if(lh.lockVoiced>=450){
+          const arr=lh.lockFreqs.slice().sort((a,b)=>a-b);
+          lh.anchor=arr[Math.floor(arr.length/2)];
+          lh.phase='hold';
+          lhNoteEl.textContent=noteNameOf(lh.anchor)+' · '+lh.anchor.toFixed(1)+' Hz';
+          lhStateEl.textContent='Locked on '+noteNameOf(lh.anchor)+' — now hold it.';
+        }
+      } else {
+        lh.lockSilence+=dt;
+        if(lh.lockSilence>800){ lh.lockFreqs.length=0; lh.lockVoiced=0; lh.lockSilence=0; }
+      }
+      return;
+    }
+    lh.totalMs+=dt;
+    if(hit&&hit.freq>0){
+      const cents=1200*Math.log2(hit.freq/lh.anchor);
+      lhCentsEl.textContent=(cents>0?'+':'')+Math.round(cents)+'¢';
+      const cl=Math.max(-50,Math.min(50,cents));
+      lhMarker.style.left=(50+cl)+'%';
+      lhMarker.classList.add('on');
+      lh.trace.push(Math.round(cents));
+      if(Math.abs(cents)<=35){ lh.inZoneMs+=dt; lh.outMs=0; }
+      else lh.outMs+=dt;
+    } else {
+      lh.trace.push(null);
+      lh.outMs+=dt;
+    }
+    if(lh.trace.length>TRACE_MAX) lh.trace.shift();
+    lhNowEl.textContent=(lh.totalMs/1000).toFixed(1)+'s';
+    lhBar.style.width=Math.min(100,lh.totalMs/300)+'%';
+    drawLhTrace();
+    if(lh.outMs>=700) lhFinish();
+  }
+  lhStartBtn.addEventListener('click',()=>{
+    if(!micStream){
+      setDrillsMicStatus('Turn on the mic above first — the Long Hold needs to hear you.',true);
+      return;
+    }
+    lh={phase:'lock',anchor:0,lockFreqs:[],lockVoiced:0,lockSilence:0,totalMs:0,inZoneMs:0,outMs:0,lastT:performance.now(),trace:[]};
+    hideGameFeedback(lhFeedback);
+    lhCentsEl.textContent='—';
+    lhNoteEl.textContent='listening…';
+    lhStateEl.textContent='Sing any comfortable note and settle on it…';
+    lhNowEl.textContent='0.0s';
+    lhZoneEl.textContent='—';
+    lhBar.style.width='0%';
+    drawLhTrace();
+    lhStartBtn.disabled=true; lhStopBtn.disabled=false;
+    gameFrameHandler=lhFrame;
+  });
+  lhStopBtn.addEventListener('click',()=>lhFinish());
+  function resetDrillHold(){
+    if(!lh) return;
+    lh=null; gameFrameHandler=null;
+    lhStartBtn.disabled=false; lhStopBtn.disabled=true;
+    lhMarker.classList.remove('on');
+    lhStateEl.textContent='Mic is off — turn it on above, then start the hold again.';
+  }
+  function stopDrillTimers(){
+    if(breath.running||breath.started) breathReset();
+    if(hiss.running){
+      hiss.running=false;
+      if(hiss.raf) cancelAnimationFrame(hiss.raf);
+      hissStartBtn.disabled=false; hissStopBtn.disabled=true;
+    }
+    if(vowel.playing) vowelStop();
+    resetDrillHold();
   }
 
   render();
